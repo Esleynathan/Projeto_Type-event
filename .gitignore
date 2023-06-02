@@ -1,0 +1,37 @@
+# Arquivos gerados pelo sistema operacional
+*.DS_Store
+Thumbs.db
+
+# Arquivos de configuração
+*.pyc
+*.pyo
+*.pyd
+_pycache_
+
+# Arquivos de log
+*.log
+
+# Ambientes virtuais
+venv/
+env/
+.env
+
+# Arquivos de backup
+*.bak
+*.swp
+
+# Diretório estático gerado pelo Django
+/static/
+
+# Diretório de mídia gerado pelo Django
+/media/
+
+# Arquivos de banco de dados
+*.sqlite3
+
+# Arquivos de cache do Django
+_pycache_/
+*.cache
+
+# Arquivos de configuração do IDE (Exemplo: Visual Studio Code)
+.vscode/
