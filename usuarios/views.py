@@ -1,9 +1,8 @@
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.contrib import messages
+from django.contrib import messages, auth
 from django.contrib.messages import constants
-from django.contrib import auth
 
 from django.http import HttpResponse
 
@@ -40,16 +39,17 @@ def login(request):
         return render(request, 'login.html')
     elif request.method == "POST":        
         username = request.POST.get('username')
-        senha = request.POST.get('senha')
+        senha = request.POST.get('senha')    
 
-        user = auth.authenticate(usarname=username, password=senha)
+        user = auth.authenticate(username=username, password=senha)
         
         print(username, senha)
+        nada = auth.authenticate()
         print (user)
 
         if not user:            
             messages.add_message(request, constants.ERROR, 'Usuario ou senha inválidos.')
-            return redirect(reverse('login'))      
+            return redirect(reverse('login'))     
         
         auth.login(request, user)
-        return redirect('/evento/novo_evento/')
+        return redirect('eventos/novo_evento/')
