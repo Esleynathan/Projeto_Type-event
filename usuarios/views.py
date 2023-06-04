@@ -3,7 +3,9 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.messages import constants
+from django.contrib import auth
 
+from django.http import HttpResponse
 
 def cadastro(request):
     if request.method == "GET":
@@ -31,3 +33,23 @@ def cadastro(request):
         
         messages.add_message(request, constants.SUCCESS, 'Usuário cadstrado com sucesso.')
     return redirect(reverse('login'))
+
+
+def login(request):
+    if request.method == "GET":
+        return render(request, 'login.html')
+    elif request.method == "POST":        
+        username = request.POST.get('username')
+        senha = request.POST.get('senha')
+
+        user = auth.authenticate(usarname=username, password=senha)
+        
+        print(username, senha)
+        print (user)
+
+        if not user:            
+            messages.add_message(request, constants.ERROR, 'Usuario ou senha inválidos.')
+            return redirect(reverse('login'))      
+        
+        auth.login(request, user)
+        return redirect('/evento/novo_evento/')
