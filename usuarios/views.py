@@ -24,9 +24,7 @@ def cadastro(request):
         if not (senha == confirmar_senha):
             messages.add_message(request, constants.ERROR, 'As senhas não coincidem.')
             return redirect(reverse('cadastro'))
-        
-         
-        
+                
         user = User.objects.create_user(username=username, email=email, password=senha)
         user.save()
         
