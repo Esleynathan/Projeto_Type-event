@@ -39,9 +39,9 @@
                 <td>{{evento.descricao}}</td>
                 <td>{{evento.data_inicio}}</td>
                 <td>{{evento.data_termino}}</td>
-                <td>Link</td>
-            </tr>
-            {% endfor %}
+                <td><a href="{% url 'inscrever_evento' evento.id %}">Exibir Evento</a></td>
+            
+            </tr            {% endfor %}
                 
         </table>
 
