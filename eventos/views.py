@@ -9,7 +9,7 @@ from django.contrib.messages import constants
 from .models import Evento, Certificado
 import os
 from django.conf import settings
-    
+
 from io import BytesIO  
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image, ImageDraw, ImageFont
@@ -64,13 +64,20 @@ def inscrever_evento(request, id):
     evento = get_object_or_404(Evento, id=id)
     if request.method == "GET":
         return render(request, 'inscrever_evento.html', {'evento': evento})
-    elif request.method == "POST":
-        #todo - Validar se o usuário já é um participante    
-        evento.participantes.add(request.user)
-        evento.save()
 
-        messages.add_message(request, constants.SUCCESS, 'Inscrição com sucesso.')
-        return redirect(reverse('inscrever_evento', kwargs={'id': id}))
+    elif request.method == "POST":
+        # todo - Validar se o usuário já é um participante
+
+        if request.user in evento.participantes.all():
+            messages.add_message(request, constants.ERROR, 'Você já esta participando.')               
+            return render(request, 'inscrever_evento.html', {'evento': evento})
+
+        else:
+            evento.participantes.add(request.user)
+            evento.save()
+
+            messages.add_message(request, constants.SUCCESS, 'Inscrição com sucesso.')   
+            return redirect(reverse('inscrever_evento', kwargs={'id': id}))
 
 def participantes_evento(request, id):
     evento = get_object_or_404(Evento, id=id)
@@ -79,7 +86,6 @@ def participantes_evento(request, id):
 
     if request.method == "GET":
         participantes = evento.participantes.all()
-
         print(participantes)
         return render(request, 'participantes_evento.html', {'evento': evento, 'participantes': participantes})
     
@@ -143,3 +149,16 @@ def gerar_certificado(request, id):
     
     messages.add_message(request, constants.SUCCESS, 'Certificados gerados')
     return redirect(reverse('certificados_evento', kwargs={'id': evento.id}))
+
+def procurar_certificado(request, id):
+    evento = get_object_or_404(Evento, id=id)
+    if not evento.criador == request.user:
+        raise Http404('Esse evento não é seu')
+        
+    email = request.POST.get('email')
+    certificado = Certificado.objects.filter(evento=evento).filter(participante__email=email).first()
+    if not certificado:
+        messages.add_message(request, constants.WARNING, 'Certificado não encontrado')
+        return redirect(reverse('certificados_evento', kwargs={'id': evento.id}))
+    
+    return redirect(certificado.certificado.url)

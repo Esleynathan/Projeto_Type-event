@@ -40,14 +40,10 @@ def login(request):
         senha = request.POST.get('senha')    
 
         user = auth.authenticate(username=username, password=senha)
-        
-        print(username, senha)
-        nada = auth.authenticate()
-        print (user)
 
         if not user:            
             messages.add_message(request, constants.ERROR, 'Usuario ou senha inválidos.')
             return redirect(reverse('login'))     
         
         auth.login(request, user)
-        return redirect('eventos/novo_evento/')
+        return redirect('/eventos/gerenciar_evento/')
